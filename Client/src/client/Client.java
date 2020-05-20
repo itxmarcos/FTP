@@ -8,6 +8,7 @@ import utils.ParametersClient;
 
 public class Client
 {
+	public static PrintWriter output;
 	
 	public static void runClient() {
 
@@ -20,7 +21,9 @@ public class Client
 
 			// Recover input & output from connection
 			BufferedReader input = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-			PrintWriter output = new PrintWriter(connection.getOutputStream(), true);
+			output = new PrintWriter(connection.getOutputStream(), true);
+			
+            String response = "";
 			
 			// Input for reading from keyboard
 			BufferedReader inputKeyboard = new BufferedReader(new InputStreamReader(System.in));
@@ -30,6 +33,8 @@ public class Client
 				data = inputKeyboard.readLine();
 				FunctionalityClient.handleCommand(data); //Detectar comando
 				output.println(data);
+                response =  input.readLine();
+				System.out.println(response);
 			}
 
 			// Close input & output

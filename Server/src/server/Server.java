@@ -9,8 +9,6 @@ import utils.ParametersServer;
 public class Server
 {
 	public static ServerSocket controlConnection;
-	public static Socket connection;
-	public static PrintWriter output;
    
     /*
      * 	 Conexi�n de control
@@ -52,18 +50,18 @@ public class Server
         try
         {
             //Creamos el servidor con sus respectivos puertos
-            controlConnection = new ServerSocket(ParametersServer.serverControlPort);
+        	controlConnection = new ServerSocket(ParametersServer.serverControlPort);
             
             //Aceptamos la conexi�n del cliente al puerto por defecto (1400)
             System.out.println("Waiting for a client...\n");
-            connection = controlConnection.accept();
+            Socket connection = controlConnection.accept();
             System.out.println("Connection accepted at port " + ParametersServer.serverControlPort);
             
             String command = "";
             
             //Asociamos la informaci�n de entrada y de salida
             BufferedReader input = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            output = new PrintWriter(connection.getOutputStream(), true);
+            PrintWriter output = new PrintWriter(connection.getOutputStream(), true);
 
             while(!command.equals("END"))
             {

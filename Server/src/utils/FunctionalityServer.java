@@ -1,4 +1,5 @@
-package utils;
+package utils
+;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -41,6 +42,11 @@ public class FunctionalityServer {
             return sendFile(filename);
               
         }
+        else if(command.contains("STOR")) 
+        {
+        	// abrir conexion en clientDataPort
+        	
+        }
         
         //ETC.
         
@@ -50,15 +56,10 @@ public class FunctionalityServer {
     
     public static String changePort(int newPort) {
         try {
-        	if(newPort == ParametersServer.serverControlPort) {
-                return "You are already in the port "+newPort;
-        	} else {
-        		Server.connection = Server.controlConnection.accept();
-        		//System.out.println("Estoy aqui");
-                return "Connection accepted PORT ["+Server.controlConnection.getInetAddress()+"]";    	      
-    	    }
+    		ParametersServer.clientDataPort = newPort;
+            return "Connection accepted PORT ["+ParametersServer.clientDataPort+"]";
         }
-        catch (IOException e)
+        catch (Exception e)
         {
             e.printStackTrace();
         }

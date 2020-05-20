@@ -1,5 +1,10 @@
 package utils;
 
+import java.io.IOException;
+import java.net.Socket;
+import java.net.UnknownHostException;
+
+import client.Client;
 
 public class FunctionalityClient {
 	
@@ -7,6 +12,7 @@ public class FunctionalityClient {
 		
 		if (command.contains("STOR")) {
 
+			// Opcion 1: new Socket (clientDataPort)
 			
 		}
 		else if (command.contains("RETR")) {
@@ -16,9 +22,11 @@ public class FunctionalityClient {
 		else if (command.contains("LIST")) {
 
 
+		} else if (command.contains("PORT")) {
+			//Client.output.print(command); //Notifico al servidor del cambio de puerto
+			int newPort = Integer.parseInt(command.substring(5, command.length()));
+			ParametersClient.clientDataPort = newPort;
 		}
-		//ETC
-
 	}
 	
 	public static boolean sendFile(String filename) {
