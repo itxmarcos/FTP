@@ -33,16 +33,15 @@ public class FunctionalityServer {
             if (command.length()==4) pathDirectory = ParametersServer.defaultFolder; //The command is LIST with no path aggregation.
             else pathDirectory = command.substring(5, command.length());
             
-            getFilesInADirectory(pathDirectory);
+            return getFilesInADirectory(pathDirectory);
         }
         else if(command.contains("RETR"))
         {
             //GUARDAMOS EL FICHERO
             String filename = command.substring(5, command.length());
-            return sendFile(filename);
-              
+            return sendFile(filename);  
         }
-        else if(command.contains("STOR")) 
+        else if(command.contains("STOR"))
         {
         	// abrir conexion en clientDataPort
         	
@@ -126,16 +125,14 @@ public class FunctionalityServer {
 	// PENDIENTE LOGUEAR LOS COMANDOS DEL SERVIDOR.
 	// DEVOLVER STRING CON EL C�DIGO
 	public static String sendFile(String filename) {
-
 		try {
-	
 			ServerSocket dataConnection = new ServerSocket(ParametersServer.serverDataPort);
 			Socket connection = dataConnection.accept();
 
 			// Para leer nuestro archivo
 			BufferedInputStream input = new BufferedInputStream(new FileInputStream(filename));
 			
-			// Para escrib�rselo al cliente
+			// Para escribirselo al cliente
 			BufferedOutputStream output = new BufferedOutputStream(connection.getOutputStream());
 			
 			// Buffer de 1000 bytes
@@ -165,7 +162,7 @@ public class FunctionalityServer {
 	}
 	
 	public static boolean receiveFile(String filename) {
-		try {	
+		try {
 			
 			// Igual hay que controlar d�nde escribimos... directorio resources en parameters
 			File file = new File(filename);
