@@ -20,8 +20,7 @@ public class FunctionalityClient {
 			
 		}
 		else if (command.contains("LIST")) {
-
-
+			
 		} else if (command.contains("PORT")) {
 			//Client.output.print(command); //Notifico al servidor del cambio de puerto
 			int newPort = Integer.parseInt(command.substring(5, command.length()));
@@ -77,12 +76,15 @@ public class FunctionalityClient {
 
 	public static boolean printFileList() {
 		try {
-			
 			// Cuando invocamos LIST, el servidor nos deber�a mandar la lista de archivos
 			// (b�sicamente, un string bien construido)
 			// Habr� que llamar a este m�todo para imprimirlo bien
 			// (es leer l�nea a l�nea...)
 			// �Y si le pasamos el BufferedReader?
+			
+			/*Estamos atascados. Tenemos 2 opciones: crear un string genérico en ParametersServer que contenga la lista de archivos
+			 * o utilizar el BufferedReader, que no sabemos cómo usar. ¿Cómo se usaría?
+			 */
 			
 			return true;
 			

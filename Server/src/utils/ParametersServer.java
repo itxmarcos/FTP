@@ -7,7 +7,7 @@ public class ParametersServer {
 	public static int clientControlPort = 1500;
 	public static int clientDataPort = 1400;
 	
-	public static String defaultFolder = "resources";
+	public static String defaultFolder = System.getProperty("user.dir")+"/src/resources";
 
 	public static final String SERVICE_READY = "220 Service ready for new user.";
 	public static final String OKAY = "200 Okay";

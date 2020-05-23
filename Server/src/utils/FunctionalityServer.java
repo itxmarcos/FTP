@@ -28,12 +28,12 @@ public class FunctionalityServer {
             int newPort = Integer.parseInt(command.substring(5, command.length()));
             return changePort(newPort);
         }
-        else if(command.contains("LIST"))
-        {
-        	//Igual es mejor usar el directorio por defecto...
-            String pathDirectory = command.substring(5, command.length());
-            getFilesInADirectory(pathDirectory);
+        else if(command.contains("LIST")) {
+        	String pathDirectory = "";
+            if (command.length()==4) pathDirectory = ParametersServer.defaultFolder; //The command is LIST with no path aggregation.
+            else pathDirectory = command.substring(5, command.length());
             
+            getFilesInADirectory(pathDirectory);
         }
         else if(command.contains("RETR"))
         {
@@ -66,10 +66,8 @@ public class FunctionalityServer {
 		return null;
     }
     
-    public static String getFilesInADirectory(String directory)
-    { 
+    public static String getFilesInADirectory(String directory) {    	
 		try (Stream<Path> walk = Files.walk(Paths.get(directory))) {
-			
 			List<String> result = walk.filter(Files::isRegularFile)
 					.map(x -> x.toString()).collect(Collectors.toList());
 			
@@ -79,7 +77,6 @@ public class FunctionalityServer {
 		} catch (IOException e) {
 			e.printStackTrace();
 			return ParametersServer.FILE_UNAVAILABLE;
-			
 		}
     }
     
