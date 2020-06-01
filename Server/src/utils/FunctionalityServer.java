@@ -37,7 +37,6 @@ public class FunctionalityServer {
         }
         else if(command.contains("RETR"))
         {
-            //GUARDAMOS EL FICHERO
             String filename = command.substring(5, command.length());
             return sendFile(filename);  
         }
@@ -51,7 +50,6 @@ public class FunctionalityServer {
         
         return null; // HABR� QUE DEVOLVER LA RESPUESTA DEL SERVIDOR
     }
-
     
     public static String changePort(int newPort) {
         try {
@@ -71,8 +69,7 @@ public class FunctionalityServer {
 					.map(x -> x.toString()).collect(Collectors.toList());
 			
 			result.forEach(System.out::println);
-			return ParametersServer.FILE_STATUS_OKAY; //Completar posibilidades
-			
+			return ParametersServer.FILE_STATUS_OKAY+result.toString(); //Completar posibilidades
 		} catch (IOException e) {
 			e.printStackTrace();
 			return ParametersServer.FILE_UNAVAILABLE;
@@ -128,6 +125,7 @@ public class FunctionalityServer {
 		try {
 			ServerSocket dataConnection = new ServerSocket(ParametersServer.serverDataPort);
 			Socket connection = dataConnection.accept();
+			System.out.println("Hola mundo!");
 
 			// Para leer nuestro archivo
 			BufferedInputStream input = new BufferedInputStream(new FileInputStream(filename));
@@ -140,9 +138,8 @@ public class FunctionalityServer {
 			// Escribimos al buffer
 			// input.read devuelve -1 cuando no queda nada
 			int n_bytes = input.read(buffer);
-			// Si hemos recuperado cosas, las escibimos al output y ya las recoger� el cliente
-			while (n_bytes != -1)
-			{
+			// Si hemos recuperado cosas, las escibimos al output y ya las recogera el cliente
+			while (n_bytes != -1) {
 				output.write(buffer,0,n_bytes);
 				n_bytes = input.read(buffer);
 			}
@@ -158,7 +155,7 @@ public class FunctionalityServer {
 		catch (Exception e) {
 			System.out.println(ParametersServer.CANT_OPEN_CONNECTION);
 		}
-		return ""; // DEVOLVER ERROR
+		return "Erroooooooor"; // DEVOLVER ERROR
 	}
 	
 	public static boolean receiveFile(String filename) {

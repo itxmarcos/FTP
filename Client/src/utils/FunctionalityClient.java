@@ -3,7 +3,9 @@ package utils;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -20,8 +22,8 @@ public class FunctionalityClient {
 			
 		}
 		else if (command.contains("RETR")) {
-
-			
+			//String pathDirectory = command.substring(5, command.length());
+			//receiveFile(pathDirectory);
 		}
 		else if (command.contains("LIST")) {
 			
@@ -73,24 +75,42 @@ public class FunctionalityClient {
 		return false;
 	}
 	
+	// Cerrar input, output y conexion
+	// Ojo con las comprobaciones: cosas que ya existen, posibles errores, etc.
 	public static boolean receiveFile(String filename){
-		
 		try {
-			
-			// Abrir conexi�n de datos
-			
+			// Abrir conexion de datos
+			ServerSocket dataConnection = new ServerSocket(ParametersClient.serverDataPort);
+			Socket connection = dataConnection.accept();
+
 			// Coger input y output
+			BufferedInputStream input = new BufferedInputStream(connection.getInputStream());
+			BufferedOutputStream output = new BufferedOutputStream(new FileOutputStream(filename));
 			
+			System.out.println("Hola 1");
+
 			// Pasar datos con el buffer
+			byte[] buffer = new byte[1000]; 
+			int n_bytes = input.read(buffer);
+			int bytesRead;
 			
-			// Cerrar input, output y conexi�n
-			
-			// Ojo con las comprobaciones: cosas que ya existen, posibles errores, etc.
-			
+			System.out.println("Hola 2");
+			do {
+		         bytesRead =
+		            input.read(buffer, n_bytes, (buffer.length-n_bytes));
+		         if(bytesRead >= 0) n_bytes += bytesRead;
+		      } while(bytesRead > -1);
+
+			System.out.println("Hola 3");
+		      output.write(buffer, 0 , n_bytes);
+		      output.flush();
+		      System.out.println("File " + filename
+		          + " downloaded (" + n_bytes + " bytes read)");
+		      System.out.println("Hola ");
 			return true;
 		
 		} catch (Exception e) {
-			
+			//System.out.println(ParametersClient.CANT_OPEN_CONNECTION);
 		}
 		return false;
 	}
@@ -102,7 +122,7 @@ public class FunctionalityClient {
 			// (bssicamente, un string bien construido)
 			// Habr� que llamar a este m�todo para imprimirlo bien
 			// (es leer l�nea a l�nea...)
-			// �Y si le pasamos el BufferedReader?
+			// Y si le pasamos el BufferedReader?
 			
 			/*Estamos atascados. Tenemos 2 opciones: crear un string genérico en ParametersServer que contenga la lista de archivos
 			 * o utilizar el BufferedReader, que no sabemos cómo usar. ¿Cómo se usaría?

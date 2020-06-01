@@ -52,7 +52,7 @@ public class Server
             //Creamos el servidor con sus respectivos puertos
         	controlConnection = new ServerSocket(ParametersServer.serverControlPort);
             
-            //Aceptamos la conexi�n del cliente al puerto por defecto (1400)
+            //Aceptamos la conexion del cliente al puerto por defecto (1400)
             System.out.println("Waiting for a client...\n");
             Socket connection = controlConnection.accept();
             System.out.println("Connection accepted at port " + ParametersServer.serverControlPort);
