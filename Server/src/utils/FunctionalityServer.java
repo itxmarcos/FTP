@@ -23,9 +23,9 @@ public class FunctionalityServer {
 
     public static String checkCommand(String command)
     {
-        if(command.contains("PORT"))
+        if(command.contains("PRT"))
         {
-            int newPort = Integer.parseInt(command.substring(5, command.length()));
+            int newPort = Integer.parseInt(command.substring(4, command.length()));
             return changePort(newPort);
         }
         else if(command.contains("LIST")) {
