@@ -24,6 +24,7 @@ public class FunctionalityServer {
 	public static String auxUser;
 	
 	public static String checkCommand(String command) {
+		
         if(command.contains("PRT")) {
             int newPort = Integer.parseInt(command.substring(4, command.length()));
             return changePort(newPort);
@@ -31,7 +32,8 @@ public class FunctionalityServer {
         } else if(command.contains("LIST")) {
         	String pathDirectory = "";
             if (command.length()==4) pathDirectory = ParametersServer.RESOURCES; //The command is LIST with no path aggregation.
-            else pathDirectory = command.substring(5, command.length());  
+            else pathDirectory = command.substring(5, command.length());
+            ParametersServer.path = pathDirectory;
             return getFilesInADirectory(pathDirectory);
             
         } else if(command.contains("RETR")) {
@@ -54,29 +56,60 @@ public class FunctionalityServer {
         {
         	String pathDirectory = command.substring(5, command.length());
         	System.out.println(checkRenameFile(pathDirectory));
+        	ParametersServer.path = pathDirectory;
         }
         else if(command.contains("RNTO") && ParametersServer.renameAccepted) 
         {
         	System.out.println("Do not forget the extension too");
         	String pathDirectory = command.substring(5, command.length());
-        	System.out.println(renameFile(pathDirectory));
+        	return renameFile(pathDirectory);
         }
         else if (command.contains("DELE"))
         {
         	String pathDirectory = command.substring(5, command.length());
-        	System.out.println(deleteFile(pathDirectory));
+        	return deleteFile(pathDirectory);
         }
         else if (command.contains("RMD"))
         {
         	String pathDirectory = command.substring(4, command.length());
-        	System.out.println(deleteDirectory(pathDirectory));
+        	return deleteDirectory(pathDirectory);
+        }
+        else if (command.contains("PWD"))
+        {        	
+        	return "257 " +getPath();
+        }
+        else if (command.contains("CWD"))
+        {
+        	String folder = command.substring(4, command.length());
+        	return changeDirectory(folder);
+        }
+        else if (command.contains("MKD"))
+        {
+        	String pathDirectory = command.substring(4, command.length());
+        	return createDirectory(pathDirectory);
         }
         //ETC.
         
         return null; // HABR� QUE DEVOLVER LA RESPUESTA DEL SERVIDOR
     }
     
-    public static String changePort(int newPort) {
+    private static String changeDirectory(String folder) {
+    	File file = new File(ParametersServer.path);
+    	if (folder.equals("..")) {
+			File parent = new File(file.getParent());
+    		ParametersServer.path=parent.getPath();
+    	} else {
+    		File nextFile = new File(file+"\\"+folder);
+    		if (nextFile.getPath() == null)
+    		return ParametersServer.FILE_UNAVAILABLE;
+    		
+    		ParametersServer.path=nextFile.getPath();
+    	}
+    	System.out.println(ParametersServer.path);
+    	return ParametersServer.FILE_ACTION_OKAY;
+	}
+
+	public static String changePort(int newPort) {
         try {
     		ParametersServer.clientDataPort = newPort;
             return "Connection accepted PORT ["+ParametersServer.clientDataPort+"]";
@@ -87,7 +120,17 @@ public class FunctionalityServer {
         }
 		return null;
     }
-    
+    public static String createDirectory(String pathname)
+    {
+        //Creating a File object
+        File file = new File(pathname);
+        //Creating the directory
+        boolean bool = file.mkdir();
+        if(!bool){
+        	return ParametersServer.FILE_UNAVAILABLE;
+        }
+		return "257 " +pathname +" created";    	
+    }
     public static String getFilesInADirectory(String directory) {    	
 		try (Stream<Path> walk = Files.walk(Paths.get(directory))) {
 			List<String> result = walk.filter(Files::isRegularFile)
@@ -179,7 +222,12 @@ public static String deleteDirectory(String filename) {
 			return ParametersServer.ACTION_ABORTED;
 		}
 	}
-
+	
+	public static String getPath()
+	{		
+		
+		return ParametersServer.path;
+	}
 	// PENDIENTE CONTROLAR ERRORES, LOS COMANDOS QUE TIENEN QUE SALIR, ETC.
 	// PENDIENTE LOGUEAR LOS COMANDOS DEL SERVIDOR.
 	// DEVOLVER STRING CON EL C�DIGO

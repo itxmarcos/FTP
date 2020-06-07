@@ -8,7 +8,8 @@ public class ParametersServer {
 	public static int clientDataPort = 1400;
 	
 	public static boolean renameAccepted = false;
-	public static String oldPath = "";
+	public static String oldPath;
+	public static String path;
 	
 	public static final String SERVICE_READY = "220 Service ready for new user.";
 	public static final String OKAY = "200 Okay";
@@ -27,4 +28,5 @@ public class ParametersServer {
 	public static final String USER_NAME_OKAY ="331 User name okay, need password";
 	public static final String USER_LOGIN ="230 User logged in , proceed";
 	public static final String USER_NOT_LOGIN ="530 User not logged in";
+	public static final String FILE_ACTION_OKAY ="250 Requested file action okay, completed";
 }
