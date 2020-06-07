@@ -7,6 +7,6 @@ public class ParametersClient {
 	public static int clientControlPort = 1500;
 	public static int clientDataPort = 1400;
 	
-	public static String defaultFolder = "resources";
+	public static final String CANT_OPEN_CONNECTION = "425 Can't open data connection.";
 
 }

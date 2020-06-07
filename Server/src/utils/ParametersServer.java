@@ -7,8 +7,6 @@ public class ParametersServer {
 	public static int clientControlPort = 1500;
 	public static int clientDataPort = 1400;
 	
-	public static String defaultFolder = System.getProperty("user.dir")+"/src/resources";
-
 	public static final String SERVICE_READY = "220 Service ready for new user.";
 	public static final String OKAY = "200 Okay";
 	public static final String BAD_SEQUENCE = "503 Bad sequence of commands.";
@@ -22,5 +20,5 @@ public class ParametersServer {
 	public static final String INSUFFICIENT_STORAGE = "452 Requested action not taken. Insufficient storage space in system.";
 	public static final String FILENAME_NOT_ALLOWED = "553 Requested action not taken. File name not allowed.";
 	public static final String CLOSING = "221 Service closing control connection.";
-
+	public static final String RESOURCES = System.getProperty("user.dir")+"/src/resources";
 }

@@ -1,5 +1,4 @@
-package utils
-;
+package utils;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -20,30 +19,25 @@ import java.util.stream.Stream;
 import server.Server;
 
 public class FunctionalityServer {
-
-    public static String checkCommand(String command)
-    {
-        if(command.contains("PRT"))
-        {
+    public static String checkCommand(String command) {
+        if(command.contains("PRT")) {
             int newPort = Integer.parseInt(command.substring(4, command.length()));
             return changePort(newPort);
-        }
-        else if(command.contains("LIST")) {
-        	String pathDirectory = "";
-            if (command.length()==4) pathDirectory = ParametersServer.defaultFolder; //The command is LIST with no path aggregation.
-            else pathDirectory = command.substring(5, command.length());
             
+        } else if(command.contains("LIST")) {
+        	String pathDirectory = "";
+            if (command.length()==4) pathDirectory = ParametersServer.RESOURCES; //The command is LIST with no path aggregation.
+            else pathDirectory = command.substring(5, command.length());  
             return getFilesInADirectory(pathDirectory);
-        }
-        else if(command.contains("RETR"))
-        {
+            
+        } else if(command.contains("RETR")) {
             String filename = command.substring(5, command.length());
-            return sendFile(filename);  
-        }
-        else if(command.contains("STOR"))
-        {
+            return downloadFileFromServer(filename); 
+            
+        } else if(command.contains("STOR")) {
         	// abrir conexion en clientDataPort
-        	
+        	String filename = command.substring(5, command.length());
+            return uploadFileToServer(filename);
         }
         
         //ETC.
@@ -121,14 +115,14 @@ public class FunctionalityServer {
 	// PENDIENTE CONTROLAR ERRORES, LOS COMANDOS QUE TIENEN QUE SALIR, ETC.
 	// PENDIENTE LOGUEAR LOS COMANDOS DEL SERVIDOR.
 	// DEVOLVER STRING CON EL C�DIGO
-	public static String sendFile(String filename) {
+	public static String downloadFileFromServer(String filename) {
 		try {
 			ServerSocket dataConnection = new ServerSocket(ParametersServer.serverDataPort);
 			Socket connection = dataConnection.accept();
 			System.out.println("Hola mundo!");
 
 			// Para leer nuestro archivo
-			BufferedInputStream input = new BufferedInputStream(new FileInputStream(filename));
+			BufferedInputStream input = new BufferedInputStream(new FileInputStream(ParametersServer.RESOURCES+filename));
 			
 			// Para escribirselo al cliente
 			BufferedOutputStream output = new BufferedOutputStream(connection.getOutputStream());
@@ -158,7 +152,7 @@ public class FunctionalityServer {
 		return "Erroooooooor"; // DEVOLVER ERROR
 	}
 	
-	public static boolean receiveFile(String filename) {
+	public static String uploadFileToServer(String filename) {
 		try {
 			
 			// Igual hay que controlar d�nde escribimos... directorio resources en parameters
@@ -172,8 +166,7 @@ public class FunctionalityServer {
 				// �QU� ERROR TIENE QUE DAR? Completar posibilidades
 
 				connection.close();
-				System.out.println(ParametersServer.SUCCESS);
-				return false;
+				return ParametersServer.SUCCESS;
 			}
 			
 			// Para coger lo que nos manda el cliente
@@ -198,13 +191,13 @@ public class FunctionalityServer {
 			
 			//Falta control comandos
 			
-			return true;
+			return "";
 			
 		} catch (Exception e) {
 
 			// Control errores
 		}
-		return false;
+		return "";
 	}	
 	
 }

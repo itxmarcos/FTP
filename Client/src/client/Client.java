@@ -31,7 +31,7 @@ public class Client
 			while(!data.equals("END")) {
 				System.out.print("Write command (END to close the server): ");
 				data = inputKeyboard.readLine();
-				FunctionalityClient.handleCommand(data); //Detectar comando
+				FunctionalityClient.checkCommand(data); //Detectar comando
 				output.println(data);
                 response =  input.readLine();
 				System.out.println(response);
@@ -40,7 +40,7 @@ public class Client
 			// Close input & output
 			input.close();
 			output.close();
-			System.out.println("Se ha cerrado la conexi�n del usuario.");
+			System.out.println("Se ha cerrado la conexion del usuario.");
 			// Close the connection
 			connection.close();
 

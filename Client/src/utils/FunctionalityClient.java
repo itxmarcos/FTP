@@ -2,10 +2,12 @@ package utils;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -14,18 +16,16 @@ import client.Client;
 
 public class FunctionalityClient {
 	
-	public static void handleCommand(String command) {
+	public static void checkCommand(String command) {
 		
 		if (command.contains("STOR")) {
-
+			
 			// Opcion 1: new Socket (clientDataPort)
 			
-		}
-		else if (command.contains("RETR")) {
-			//String pathDirectory = command.substring(5, command.length());
-			//receiveFile(pathDirectory);
-		}
-		else if (command.contains("LIST")) {
+		} else if (command.contains("RETR")) {
+			String pathDirectory = command.substring(5, command.length());
+			receiveFile(pathDirectory);
+		} else if (command.contains("LIST")) {
 			
 		} else if (command.contains("PORT")) {
 			//Client.output.print(command); //Notifico al servidor del cambio de puerto
@@ -80,17 +80,16 @@ public class FunctionalityClient {
 	public static boolean receiveFile(String filename){
 		try {
 			// Abrir conexion de datos
-			ServerSocket dataConnection = new ServerSocket(ParametersClient.serverDataPort);
-			Socket connection = dataConnection.accept();
+			Socket dataConnection = new Socket("localhost", ParametersClient.serverDataPort);
 
 			// Coger input y output
-			BufferedInputStream input = new BufferedInputStream(connection.getInputStream());
+			BufferedReader input = new BufferedReader(new InputStreamReader(dataConnection.getInputStream()));
 			BufferedOutputStream output = new BufferedOutputStream(new FileOutputStream(filename));
 			
 			System.out.println("Hola 1");
 
 			// Pasar datos con el buffer
-			byte[] buffer = new byte[1000]; 
+			/*byte[] buffer = new byte[1000]; 
 			int n_bytes = input.read(buffer);
 			int bytesRead;
 			
@@ -107,10 +106,10 @@ public class FunctionalityClient {
 		      System.out.println("File " + filename
 		          + " downloaded (" + n_bytes + " bytes read)");
 		      System.out.println("Hola ");
-			return true;
+			return true;*/
 		
 		} catch (Exception e) {
-			//System.out.println(ParametersClient.CANT_OPEN_CONNECTION);
+			System.out.println(ParametersClient.CANT_OPEN_CONNECTION);
 		}
 		return false;
 	}
