@@ -21,4 +21,7 @@ public class ParametersServer {
 	public static final String FILENAME_NOT_ALLOWED = "553 Requested action not taken. File name not allowed.";
 	public static final String CLOSING = "221 Service closing control connection.";
 	public static final String RESOURCES = System.getProperty("user.dir")+"/src/resources";
+	public static final String USER_NAME_OKAY ="331 User name okay, need password";
+	public static final String USER_LOGIN ="230 User logged in , proceed";
+	public static final String USER_NOT_LOGIN ="530 User not logged in";
 }

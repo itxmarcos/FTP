@@ -12,6 +12,7 @@ import java.net.Socket;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -19,7 +20,10 @@ import java.util.stream.Stream;
 import server.Server;
 
 public class FunctionalityServer {
-    public static String checkCommand(String command) {
+	public static HashMap <String,String> Usuarios = new HashMap<String, String>();
+	public static String auxUser;
+	
+	public static String checkCommand(String command) {
         if(command.contains("PRT")) {
             int newPort = Integer.parseInt(command.substring(4, command.length()));
             return changePort(newPort);
@@ -38,6 +42,13 @@ public class FunctionalityServer {
         	// abrir conexion en clientDataPort
         	String filename = command.substring(5, command.length());
             return uploadFileToServer(filename);
+        }else if(command.contains("USER")) {
+        	String username = command.substring(5,command.length());
+        	auxUser=username;
+        	return user();
+        }else if(command.contains("PASS")) {
+        	String password = command.substring(5,command.length());
+        	return pass(password);
         }
         
         //ETC.
@@ -199,5 +210,24 @@ public class FunctionalityServer {
 		}
 		return "";
 	}	
-	
+	public static String user() {
+		Usuarios.put("Alejandro","Pinedo");
+		Usuarios.put("Diego", "Ducha");
+		Usuarios.put("Marcos", "Caballero");
+		return ParametersServer.USER_NAME_OKAY.toString();
+	}
+	public static String pass(String password) {
+		try {
+			if(Usuarios.get(auxUser).equals(password))
+			{
+				return ParametersServer.USER_LOGIN;
+			}
+			else {
+			
+				return ParametersServer.USER_NOT_LOGIN;
+			}
+		} catch (Exception e) {
+			return ParametersServer.USER_NOT_LOGIN;
+		}
+	}
 }
