@@ -7,6 +7,9 @@ public class ParametersServer {
 	public static int clientControlPort = 1500;
 	public static int clientDataPort = 1400;
 	
+	public static boolean renameAccepted = false;
+	public static String oldPath = "";
+	
 	public static final String SERVICE_READY = "220 Service ready for new user.";
 	public static final String OKAY = "200 Okay";
 	public static final String BAD_SEQUENCE = "503 Bad sequence of commands.";

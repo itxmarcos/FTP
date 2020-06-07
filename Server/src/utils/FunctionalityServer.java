@@ -50,7 +50,27 @@ public class FunctionalityServer {
         	String password = command.substring(5,command.length());
         	return pass(password);
         }
-        
+        else if(command.contains("RNFR")) 
+        {
+        	String pathDirectory = command.substring(5, command.length());
+        	System.out.println(checkRenameFile(pathDirectory));
+        }
+        else if(command.contains("RNTO") && ParametersServer.renameAccepted) 
+        {
+        	System.out.println("Do not forget the extension too");
+        	String pathDirectory = command.substring(5, command.length());
+        	System.out.println(renameFile(pathDirectory));
+        }
+        else if (command.contains("DELE"))
+        {
+        	String pathDirectory = command.substring(5, command.length());
+        	System.out.println(deleteFile(pathDirectory));
+        }
+        else if (command.contains("RMD"))
+        {
+        	String pathDirectory = command.substring(4, command.length());
+        	System.out.println(deleteDirectory(pathDirectory));
+        }
         //ETC.
         
         return null; // HABR� QUE DEVOLVER LA RESPUESTA DEL SERVIDOR
@@ -92,31 +112,68 @@ public class FunctionalityServer {
 				return ParametersServer.FILE_ACTION_UNAVAILABLE;
 
 			}
-	//		return file.delete();   //Arreglar para que borre
+			file.delete();   //Arreglar para que borre
 			return ParametersServer.FILE_STATUS_OKAY; //Completar posibilidades
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ParametersServer.ACTION_ABORTED;
 		}
 	}
-
-	public static String renameFile(String oldFilename, String newFilename) {
+public static String deleteDirectory(String filename) {
 		
 		try {
 			
+			File file = new File(filename);
+			File parent = new File(file.getParent());
+			if (!file.exists()){
+
+			//	System.out.println(Parameters.FILE_ACTION_UNAVAILABLE);
+				return ParametersServer.FILE_UNAVAILABLE;
+
+			}
+			parent.delete();   //Arreglar para que borre
+			return ParametersServer.FILE_STATUS_OKAY; //Completar posibilidades
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ParametersServer.ACTION_ABORTED;
+		}
+	}
+	public static String checkRenameFile(String oldFilename) {
+		try {
 			File oldFile = new File(oldFilename);
-			File newFile = new File(newFilename);
+			//File newFile = new File(newFilename);
 			
 			if (!oldFile.exists()){
 		//		System.out.println(Parameters.FILE_ACTION_UNAVAILABLE);
 				return ParametersServer.FILE_UNAVAILABLE;
 			}
-			if (newFile.exists()){
+			/*if (newFile.exists()){
 				System.out.println(ParametersServer.FILENAME_NOT_ALLOWED);
 				return ParametersServer.FILENAME_NOT_ALLOWED;
-			}
+			}*/
 	//		return oldFile.renameTo(newFile); //Arreglar para devolver string
+			ParametersServer.renameAccepted = true;
+			ParametersServer.oldPath = oldFilename;
 			return ParametersServer.FILE_STATUS_OKAY; //Completar posibilidades
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ParametersServer.ACTION_ABORTED;
+		}
+	}
+	public static String renameFile(String newFilename) {
+		try {
+			File oldFile = new File(ParametersServer.oldPath);
+			File newFile = new File(oldFile.getParent() + "\\"+ newFilename);		
+
+			//	return oldFile.renameTo(newFile); //Arreglar para devolver string
+			ParametersServer.renameAccepted = false;			
+			if(oldFile.renameTo(newFile)){
+				return ParametersServer.FILE_STATUS_OKAY;
+	        }else{
+	        	return ParametersServer.FILENAME_NOT_ALLOWED;
+	        }
+			
+			 //Completar posibilidades
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ParametersServer.ACTION_ABORTED;
