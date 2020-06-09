@@ -2,6 +2,8 @@ package utils;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -20,6 +22,7 @@ import java.util.stream.Stream;
 import server.Server;
 
 public class FunctionalityServer {
+	public static ServerSocket dataConnection;
 	public static HashMap <String,String> Usuarios = new HashMap<String, String>();
 	public static String auxUser;
 	
@@ -112,6 +115,7 @@ public class FunctionalityServer {
 	public static String changePort(int newPort) {
         try {
     		ParametersServer.clientDataPort = newPort;
+    		dataConnection = new ServerSocket(ParametersServer.serverDataPort);
             return "Connection accepted PORT ["+ParametersServer.clientDataPort+"]";
         }
         catch (Exception e)
@@ -233,15 +237,14 @@ public static String deleteDirectory(String filename) {
 	// DEVOLVER STRING CON EL C�DIGO
 	public static String downloadFileFromServer(String filename) {
 		try {
-			ServerSocket dataConnection = new ServerSocket(ParametersServer.serverDataPort);
 			Socket connection = dataConnection.accept();
 			System.out.println("Hola mundo!");
 
 			// Para leer nuestro archivo
-			BufferedInputStream input = new BufferedInputStream(new FileInputStream(ParametersServer.RESOURCES+filename));
+			DataInputStream input = new DataInputStream(new FileInputStream(ParametersServer.RESOURCES+filename));
 			
 			// Para escribirselo al cliente
-			BufferedOutputStream output = new BufferedOutputStream(connection.getOutputStream());
+			DataOutputStream output = new DataOutputStream(connection.getOutputStream());
 			
 			// Buffer de 1000 bytes
 			byte[] buffer = new byte[1000];

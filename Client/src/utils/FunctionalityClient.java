@@ -3,6 +3,8 @@ package utils;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -27,7 +29,7 @@ public class FunctionalityClient {
 			receiveFile(pathDirectory);
 		} else if (command.contains("LIST")) {
 			
-		} else if (command.contains("PORT")) {
+		} else if (command.contains("PRT")) {
 			//Client.output.print(command); //Notifico al servidor del cambio de puerto
 			int newPort = Integer.parseInt(command.substring(5, command.length()));
 			ParametersClient.clientDataPort = newPort;
@@ -83,20 +85,18 @@ public class FunctionalityClient {
 			Socket dataConnection = new Socket("localhost", ParametersClient.serverDataPort);
 
 			// Coger input y output
-			BufferedReader input = new BufferedReader(new InputStreamReader(dataConnection.getInputStream()));
-			BufferedOutputStream output = new BufferedOutputStream(new FileOutputStream(filename));
+			//HACERLO CON DATAINPUTSTREAM Y DATAOUTPUTSTREAM
+			DataInputStream input = new DataInputStream(dataConnection.getInputStream());
+			DataOutputStream output = new DataOutputStream(new FileOutputStream(filename));
 			
-			System.out.println("Hola 1");
-
 			// Pasar datos con el buffer
-			/*byte[] buffer = new byte[1000]; 
+			byte[] buffer = new byte[1000]; 
 			int n_bytes = input.read(buffer);
 			int bytesRead;
 			
 			System.out.println("Hola 2");
 			do {
-		         bytesRead =
-		            input.read(buffer, n_bytes, (buffer.length-n_bytes));
+		         bytesRead = input.read(buffer, n_bytes, (buffer.length-n_bytes));
 		         if(bytesRead >= 0) n_bytes += bytesRead;
 		      } while(bytesRead > -1);
 
@@ -106,7 +106,12 @@ public class FunctionalityClient {
 		      System.out.println("File " + filename
 		          + " downloaded (" + n_bytes + " bytes read)");
 		      System.out.println("Hola ");
-			return true;*/
+		      
+		      
+		      input.close();
+		      output.close();
+		      dataConnection.close();
+			return true;
 		
 		} catch (Exception e) {
 			System.out.println(ParametersClient.CANT_OPEN_CONNECTION);
