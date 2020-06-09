@@ -238,21 +238,19 @@ public static String deleteDirectory(String filename) {
 	public static String downloadFileFromServer(String filename) {
 		try {
 			Socket connection = dataConnection.accept();
-			System.out.println("Hola mundo!");
 
 			// Para leer nuestro archivo
-			DataInputStream input = new DataInputStream(new FileInputStream(ParametersServer.RESOURCES+filename));
-			
+			DataInputStream input = new DataInputStream(new FileInputStream(ParametersServer.RESOURCES+filename));	
 			// Para escribirselo al cliente
 			DataOutputStream output = new DataOutputStream(connection.getOutputStream());
 			
 			// Buffer de 1000 bytes
 			byte[] buffer = new byte[1000];
 			// Escribimos al buffer
-			// input.read devuelve -1 cuando no queda nada
 			int n_bytes = input.read(buffer);
+			System.out.println("Sending: "+buffer);
 			// Si hemos recuperado cosas, las escibimos al output y ya las recogera el cliente
-			while (n_bytes != -1) {
+			while (n_bytes != -1) { // input.read devuelve -1 cuando no queda nada
 				output.write(buffer,0,n_bytes);
 				n_bytes = input.read(buffer);
 			}

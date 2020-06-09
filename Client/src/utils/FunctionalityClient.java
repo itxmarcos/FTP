@@ -26,7 +26,7 @@ public class FunctionalityClient {
 			
 		} else if (command.contains("RETR")) {
 			String pathDirectory = command.substring(5, command.length());
-			receiveFile(pathDirectory);
+			downloadFileFromServer(pathDirectory);
 		} else if (command.contains("LIST")) {
 			
 		} else if (command.contains("PRT")) {
@@ -36,26 +36,22 @@ public class FunctionalityClient {
 		}
 	}
 	
-	public static boolean sendFile(String filename) {
-				
+	public static boolean uploadFileToServer(String filename) {	
 		try {
 			ServerSocket dataConnection = new ServerSocket(ParametersClient.serverDataPort);
 			Socket connection = dataConnection.accept();
 
 			// Para leer nuestro archivo
-			BufferedInputStream input = new BufferedInputStream(new FileInputStream(filename));
-			
+			DataInputStream input = new DataInputStream(connection.getInputStream());
 			// Para escribirselo al cliente
-			BufferedOutputStream output = new BufferedOutputStream(connection.getOutputStream());
+			DataOutputStream output = new DataOutputStream(new FileOutputStream(ParametersClient.RESOURCES+filename));
 			
 			// Buffer de 1000 bytes
 			byte[] buffer = new byte[1000];
 			// Escribimos al buffer
-			// input.read devuelve -1 cuando no queda nada
 			int n_bytes = input.read(buffer);
-			// Si hemos recuperado cosas, las escibimos al output y ya las recoger� el cliente
-			while (n_bytes != -1)
-			{
+			System.out.println("Received: "+buffer);
+			while (n_bytes != -1) { // input.read devuelve -1 cuando no queda nada
 				output.write(buffer,0,n_bytes);
 				n_bytes = input.read(buffer);
 			}
@@ -77,40 +73,69 @@ public class FunctionalityClient {
 		return false;
 	}
 	
-	// Cerrar input, output y conexion
-	// Ojo con las comprobaciones: cosas que ya existen, posibles errores, etc.
-	public static boolean receiveFile(String filename){
+	public static boolean downloadFileFromServer(String filename) {	
+		try {
+			ServerSocket dataConnection = new ServerSocket(ParametersClient.serverDataPort);
+			Socket connection = dataConnection.accept();
+
+			// Para leer nuestro archivo
+			DataInputStream input = new DataInputStream(connection.getInputStream());
+			// Para escribirselo al cliente
+			DataOutputStream output = new DataOutputStream(new FileOutputStream(ParametersClient.RESOURCES+filename));
+			
+			// Buffer de 1000 bytes
+			byte[] buffer = new byte[1000];
+			// Escribimos al buffer
+			int n_bytes = input.read(buffer);
+			System.out.println("Received: "+buffer);
+			while (n_bytes != -1) { // input.read devuelve -1 cuando no queda nada
+				output.write(buffer,0,n_bytes);
+				n_bytes = input.read(buffer);
+			}
+
+			// Close the connections
+			input.close();
+			output.close();
+
+			connection.close();
+			dataConnection.close();
+			
+			// Ojo con las comprobaciones: cosas que ya existen, posibles errores, etc.
+			
+			return true;
+			
+		}
+		catch (Exception e) {
+		}
+		return false;
+	}
+	
+	public static boolean downloadFileFromServerOLD(String filename){
 		try {
 			// Abrir conexion de datos
 			Socket dataConnection = new Socket("localhost", ParametersClient.serverDataPort);
 
 			// Coger input y output
-			//HACERLO CON DATAINPUTSTREAM Y DATAOUTPUTSTREAM
 			DataInputStream input = new DataInputStream(dataConnection.getInputStream());
-			DataOutputStream output = new DataOutputStream(new FileOutputStream(filename));
+			DataOutputStream output = new DataOutputStream(new FileOutputStream(ParametersClient.RESOURCES+filename));
 			
 			// Pasar datos con el buffer
 			byte[] buffer = new byte[1000]; 
 			int n_bytes = input.read(buffer);
 			int bytesRead;
 			
-			System.out.println("Hola 2");
 			do {
 		         bytesRead = input.read(buffer, n_bytes, (buffer.length-n_bytes));
 		         if(bytesRead >= 0) n_bytes += bytesRead;
-		      } while(bytesRead > -1);
+		    } while(bytesRead > -1);
 
-			System.out.println("Hola 3");
-		      output.write(buffer, 0 , n_bytes);
-		      output.flush();
-		      System.out.println("File " + filename
-		          + " downloaded (" + n_bytes + " bytes read)");
-		      System.out.println("Hola ");
+			output.write(buffer, 0 , n_bytes);
+			output.flush();
+			System.out.println("File " + filename+ " downloaded (" + n_bytes + " bytes read)");		      
 		      
-		      
-		      input.close();
-		      output.close();
-		      dataConnection.close();
+		    input.close();
+		    output.close();
+		    dataConnection.close();
 			return true;
 		
 		} catch (Exception e) {
