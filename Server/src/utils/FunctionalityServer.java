@@ -6,8 +6,11 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -112,6 +115,7 @@ public class FunctionalityServer {
     	return ParametersServer.FILE_ACTION_OKAY;
 	}
 
+    
 	public static String changePort(int newPort) {
         try {
     		ParametersServer.clientDataPort = newPort;
@@ -124,6 +128,8 @@ public class FunctionalityServer {
         }
 		return null;
     }
+	
+	
     public static String createDirectory(String pathname)
     {
         //Creating a File object
@@ -237,8 +243,9 @@ public static String deleteDirectory(String filename) {
 	// DEVOLVER STRING CON EL C�DIGO
 	public static String downloadFileFromServer(String filename) {
 		try {
+			
 			Socket connection = dataConnection.accept();
-
+			
 			// Para leer nuestro archivo
 			DataInputStream input = new DataInputStream(new FileInputStream(ParametersServer.RESOURCES+filename));	
 			// Para escribirselo al cliente
@@ -271,46 +278,43 @@ public static String deleteDirectory(String filename) {
 	
 	public static String uploadFileToServer(String filename) {
 		try {
+			System.out.println("Entro a la funcion");
+			Socket connection = dataConnection.accept();
+			System.out.println("Pillo socket");
 			
-			// Igual hay que controlar d�nde escribimos... directorio resources en parameters
-			File file = new File(filename);
+			InputStream in = null;
+		    OutputStream out = null;
+		    
+	        try {
+	        	
+	            in = connection.getInputStream();
+	        } catch (IOException ex) {
+	            System.out.println("Can't get socket input stream. ");
+	        }
 
-			// �Esta conexi�n est� bien? No lo se lo siento
-			Socket connection = new Socket("localhost", ParametersServer.clientDataPort);
+	        try {
+				System.out.println("Cojo la ruta");
 
-			if (!file.createNewFile()){
-				
-				// �QU� ERROR TIENE QUE DAR? Completar posibilidades
+	            out = new FileOutputStream(ParametersServer.RESOURCES+filename);
+	            System.out.println("Tengo la ruta");
+	        } catch (FileNotFoundException ex) {
+	            System.out.println("File not found. ");
+	        }
 
-				connection.close();
-				return ParametersServer.SUCCESS;
-			}
-			
-			// Para coger lo que nos manda el cliente
-			BufferedInputStream input = new BufferedInputStream(connection.getInputStream());
-			
-			// Para escribirlo
-			BufferedOutputStream output = new BufferedOutputStream(new FileOutputStream(file));
-			
-			// Lo mismo de antes, buffer, escribimos ah�, y a nuestro output
-			byte [] buffer = new byte[1000];
-			int n_bytes = input.read(buffer);
-			while (n_bytes > 0)
-			{
-				output.write(buffer,0,n_bytes);
-				n_bytes=input.read(buffer);
-			}
+	        byte[] bytes = new byte[16*1024];
 
-			// Cerramos todo
-			input.close();
-			output.close();
-			connection.close();
-			
-			//Falta control comandos
-			
-			return "";
-			
-		} catch (Exception e) {
+	        int count;
+	        while ((count = in.read(bytes)) > 0) {
+	            out.write(bytes, 0, count);
+	        }
+
+	        out.close();
+	        in.close();
+	        connection.close();
+	        return ParametersServer.SUCCESS;
+	        //serverSocket.close();
+	    }	
+		 catch (Exception e) {
 
 			// Control errores
 		}

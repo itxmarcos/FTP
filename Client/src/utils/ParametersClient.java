@@ -8,6 +8,6 @@ public class ParametersClient {
 	public static int clientDataPort = 1400;
 	
 	public static final String CANT_OPEN_CONNECTION = "425 Can't open data connection.";
-	public static final String RESOURCES = System.getProperty("user.dir")+"/src/resources";
+	public static final String RESOURCES = System.getProperty("user.dir")+"/src/resources/";
 
 }
