@@ -8,31 +8,30 @@ import utils.ParametersClient;
 
 public class Client
 {
-	public static PrintWriter output;
 	
 	public static void runClient() {
 
 		try {
 
-			String data = "";
+			String command = "";
 
 			// Connect with the server
 			Socket connection = new Socket("localhost", ParametersClient.serverControlPort);
 
 			// Recover input & output from connection
 			BufferedReader input = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-			output = new PrintWriter(connection.getOutputStream(), true);
+			PrintWriter output = new PrintWriter(connection.getOutputStream(), true);
 			
             String response = "";
 			
 			// Input for reading from keyboard
 			BufferedReader inputKeyboard = new BufferedReader(new InputStreamReader(System.in));
 
-			while(!data.equals("END")) {
+			while(!command.equals("END")) {
 				System.out.print("Write command (END to close the server): ");
-				data = inputKeyboard.readLine();
-				FunctionalityClient.checkCommand(data); //Detectar comando
-				output.println(data);
+				command = inputKeyboard.readLine();
+				output.println(command);
+				FunctionalityClient.checkCommand(command); //Detectar comando	
                 response =  input.readLine();
 				System.out.println(response);
 			}

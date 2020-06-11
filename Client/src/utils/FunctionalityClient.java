@@ -78,13 +78,15 @@ public class FunctionalityClient {
 	public static boolean downloadFileFromServer(String filename) {	
 		try {
 				
-			ServerSocket dataConnection = new ServerSocket(ParametersClient.serverDataPort);
-			Socket connection = dataConnection.accept();
+			// ServerSocket dataConnection = new ServerSocket(ParametersClient.serverDataPort);
+			Socket dataConnection = new Socket("localhost", ParametersClient.serverDataPort);
+			//Socket connection = dataConnection.accept();
+			System.out.println("Connected to server at " + ParametersClient.serverDataPort);
 
 			// Para leer nuestro archivo
-			DataInputStream input = new DataInputStream(connection.getInputStream());
+			DataInputStream input = new DataInputStream(dataConnection.getInputStream());
 			// Para escribirselo al cliente
-			DataOutputStream output = new DataOutputStream(new FileOutputStream(ParametersClient.RESOURCES+filename));
+			FileOutputStream output = new FileOutputStream(ParametersClient.RESOURCES+filename);
 			
 			// Buffer de 1000 bytes
 			byte[] buffer = new byte[1000];
@@ -100,7 +102,6 @@ public class FunctionalityClient {
 			input.close();
 			output.close();
 
-			connection.close();
 			dataConnection.close();
 			
 			// Ojo con las comprobaciones: cosas que ya existen, posibles errores, etc.

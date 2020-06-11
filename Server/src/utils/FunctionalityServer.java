@@ -120,6 +120,7 @@ public class FunctionalityServer {
         try {
     		ParametersServer.clientDataPort = newPort;
     		dataConnection = new ServerSocket(ParametersServer.serverDataPort);
+    		System.out.println("Server ready for connection at port" + ParametersServer.serverDataPort);
             return "Connection accepted PORT ["+ParametersServer.clientDataPort+"]";
         }
         catch (Exception e)
@@ -245,9 +246,10 @@ public static String deleteDirectory(String filename) {
 		try {
 			
 			Socket connection = dataConnection.accept();
+			System.out.println("Client connected to data connection at port " + ParametersServer.serverDataPort);
 			
 			// Para leer nuestro archivo
-			DataInputStream input = new DataInputStream(new FileInputStream(ParametersServer.RESOURCES+filename));	
+			FileInputStream input = new FileInputStream(ParametersServer.RESOURCES+filename);	
 			// Para escribirselo al cliente
 			DataOutputStream output = new DataOutputStream(connection.getOutputStream());
 			

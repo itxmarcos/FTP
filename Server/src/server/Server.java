@@ -68,12 +68,15 @@ public class Server
                 //Obtenemos la informaci�n que nos pasa el cliente
                 command =  input.readLine();
                 
+                System.out.println("Received command " + command);
+                
                 // AQU� HAY QUE VER QU� COMANDO ES Y DECIDIR QU� HACE
                 // EN LOS M�TODOS ABRIREMOS Y CERRAREMOS LA CONEXI�N DE DATOS
                 String response = FunctionalityServer.checkCommand(command);
                 
                 // HAY QUE MANDAR LA RESPUESTA DEL SERVIDOR AL CLIENTE
                 output.println(response);
+                
 
             }
             
