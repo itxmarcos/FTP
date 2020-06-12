@@ -2,6 +2,7 @@ package utils;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -10,6 +11,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
@@ -61,12 +63,11 @@ public class FunctionalityServer {
         else if(command.contains("RNFR")) 
         {
         	String pathDirectory = command.substring(5, command.length());
-        	System.out.println(checkRenameFile(pathDirectory));
         	ParametersServer.path = pathDirectory;
+        	return checkRenameFile(pathDirectory);
         }
         else if(command.contains("RNTO") && ParametersServer.renameAccepted) 
         {
-        	System.out.println("Do not forget the extension too");
         	String pathDirectory = command.substring(5, command.length());
         	return renameFile(pathDirectory);
         }
@@ -96,7 +97,7 @@ public class FunctionalityServer {
         }
         //ETC.
         
-        return null; // HABR� QUE DEVOLVER LA RESPUESTA DEL SERVIDOR
+        return "papoa"; // HABR� QUE DEVOLVER LA RESPUESTA DEL SERVIDOR
     }
     
     private static String changeDirectory(String folder) {
@@ -121,13 +122,12 @@ public class FunctionalityServer {
     		ParametersServer.clientDataPort = newPort;
     		dataConnection = new ServerSocket(ParametersServer.serverDataPort);
     		System.out.println("Server ready for connection at port" + ParametersServer.serverDataPort);
-            return "Connection accepted PORT ["+ParametersServer.clientDataPort+"]";
+            return "Connection accepted PORT ["+ParametersServer.clientDataPort+"] /n "+ParametersServer.OKAY;
         }
         catch (Exception e)
         {
-            e.printStackTrace();
+            return ParametersServer.BAD_SEQUENCE;
         }
-		return null;
     }
 	
 	
@@ -148,7 +148,7 @@ public class FunctionalityServer {
 					.map(x -> x.toString()).collect(Collectors.toList());
 			
 			result.forEach(System.out::println);
-			return ParametersServer.FILE_STATUS_OKAY+result.toString(); //Completar posibilidades
+			return ParametersServer.FILE_STATUS_OKAY+result.toString(); 
 		} catch (IOException e) {
 			e.printStackTrace();
 			return ParametersServer.FILE_UNAVAILABLE;
@@ -217,7 +217,7 @@ public static String deleteDirectory(String filename) {
 	public static String renameFile(String newFilename) {
 		try {
 			File oldFile = new File(ParametersServer.oldPath);
-			File newFile = new File(oldFile.getParent() + "\\"+ newFilename);		
+			File newFile = new File(oldFile.getParent() + "\\"+ newFilename+"."+getFileExtension(ParametersServer.oldPath));		
 
 			//	return oldFile.renameTo(newFile); //Arreglar para devolver string
 			ParametersServer.renameAccepted = false;			
@@ -227,7 +227,6 @@ public static String deleteDirectory(String filename) {
 	        	return ParametersServer.FILENAME_NOT_ALLOWED;
 	        }
 			
-			 //Completar posibilidades
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ParametersServer.ACTION_ABORTED;
@@ -248,6 +247,15 @@ public static String deleteDirectory(String filename) {
 			Socket connection = dataConnection.accept();
 			System.out.println("Client connected to data connection at port " + ParametersServer.serverDataPort);
 			
+			File f= new File(ParametersServer.RESOURCES+filename);
+			
+			if(!f.exists()) {
+				PrintWriter output = new PrintWriter(connection.getOutputStream(), true); //Nuevo print para manejar errores
+				output.print("Error"); 
+				connection.close();
+				dataConnection.close();
+				return ParametersServer.FILE_ACTION_UNAVAILABLE;
+			}
 			// Para leer nuestro archivo
 			FileInputStream input = new FileInputStream(ParametersServer.RESOURCES+filename);	
 			// Para escribirselo al cliente
@@ -273,51 +281,38 @@ public static String deleteDirectory(String filename) {
 			return ParametersServer.SUCCESS;
 		}
 		catch (Exception e) {
-			System.out.println(ParametersServer.CANT_OPEN_CONNECTION);
+			return ParametersServer.FILE_UNAVAILABLE;
 		}
-		return "Erroooooooor"; // DEVOLVER ERROR
 	}
 	
 	public static String uploadFileToServer(String filename) {
 		try {
-			System.out.println("Entro a la funcion");
 			Socket connection = dataConnection.accept();
-			System.out.println("Pillo socket");
+			System.out.println("Client connected to data connection at port " + ParametersServer.serverDataPort);
 			
-			InputStream in = null;
-		    OutputStream out = null;
-		    
-	        try {
-	        	
-	            in = connection.getInputStream();
-	        } catch (IOException ex) {
-	            System.out.println("Can't get socket input stream. ");
-	        }
+			// Para leer nuestro archivo
+			DataInputStream input = new DataInputStream(connection.getInputStream());
+			// Para escribirselo al cliente
+			FileOutputStream output = new FileOutputStream(ParametersServer.RESOURCES+filename);
+			
+			// Buffer de 1000 bytes
+			byte[] buffer = new byte[1000];
+			// Escribimos al buffer
+			int n_bytes = input.read(buffer);
+			System.out.println("Received: "+buffer);
+			while (n_bytes != -1) { // input.read devuelve -1 cuando no queda nada
+				output.write(buffer,0,n_bytes);
+				n_bytes = input.read(buffer);
+			}
+			// Close the connections
+			input.close();
+			output.close();
 
-	        try {
-				System.out.println("Cojo la ruta");
-
-	            out = new FileOutputStream(ParametersServer.RESOURCES+filename);
-	            System.out.println("Tengo la ruta");
-	        } catch (FileNotFoundException ex) {
-	            System.out.println("File not found. ");
-	        }
-
-	        byte[] bytes = new byte[16*1024];
-
-	        int count;
-	        while ((count = in.read(bytes)) > 0) {
-	            out.write(bytes, 0, count);
-	        }
-
-	        out.close();
-	        in.close();
-	        connection.close();
-	        return ParametersServer.SUCCESS;
-	        //serverSocket.close();
+			connection.close();
+			dataConnection.close();
+			return ParametersServer.SUCCESS;
 	    }	
 		 catch (Exception e) {
-
 			// Control errores
 		}
 		return "";
@@ -341,5 +336,22 @@ public static String deleteDirectory(String filename) {
 		} catch (Exception e) {
 			return ParametersServer.USER_NOT_LOGIN;
 		}
+	}
+	public static String getFileExtension(String path) {
+		String stringAux="";
+		String stringAux2="";
+		for(int i = path.length() - 1; i >= 0; i--)
+		{
+			if( path.charAt(i)=='.') {
+				i=-1;
+			}else {
+			 stringAux = stringAux + path.charAt(i);
+			}
+		}
+		for(int i = stringAux.length() - 1; i >= 0; i--)
+		{
+			stringAux2= stringAux2+ stringAux.charAt(i);
+		}
+		return stringAux2;
 	}
 }

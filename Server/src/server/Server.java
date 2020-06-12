@@ -63,7 +63,7 @@ public class Server
             BufferedReader input = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             PrintWriter output = new PrintWriter(connection.getOutputStream(), true);
 
-            while(!command.equals("END"))
+            while(!command.equals("QUIT"))
             {
                 //Obtenemos la informaci�n que nos pasa el cliente
                 command =  input.readLine();

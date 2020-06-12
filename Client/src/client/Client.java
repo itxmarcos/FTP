@@ -27,8 +27,8 @@ public class Client
 			// Input for reading from keyboard
 			BufferedReader inputKeyboard = new BufferedReader(new InputStreamReader(System.in));
 
-			while(!command.equals("END")) {
-				System.out.print("Write command (END to close the server): ");
+			while(!command.equals("QUIT")) {
+				System.out.print("Write command (QUIT to close the server): ");
 				command = inputKeyboard.readLine();
 				output.println(command);
 				FunctionalityClient.checkCommand(command); //Detectar comando	
