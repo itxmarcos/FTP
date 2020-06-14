@@ -29,4 +29,7 @@ public class ParametersServer {
 	public static final String USER_LOGIN ="230 User logged in , proceed";
 	public static final String USER_NOT_LOGIN ="530 User not logged in";
 	public static final String FILE_ACTION_OKAY ="250 Requested file action okay, completed";
+	public static final String COMMAND_NOT_IMPLEMENTED = "502 Command not implemented";
+	public static final String COMMAND_UNRECOGNIZED = "500 Command not implemented";
+	public static final String ACTION_REQUESTED = "350 Requeted file action pending further information";
 }

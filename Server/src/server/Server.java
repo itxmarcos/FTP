@@ -17,7 +17,7 @@ public class Server
      * |				 	|
      * |				 	|
      * |  Llega cmd datos 	|
-     * |  Inicio conexi�n 	|
+     * |  Inicio conexi�n|
      * |   | start_data	| 	|
      * |   |    data	| 	|
      * |   |    data	| 	|
@@ -32,7 +32,7 @@ public class Server
      * |				 	|
      * |				 	|
      * |  Llega cmd datos 	|
-     * |  Inicio conexi�n 	|
+     * |  Inicio conexi�n |
      * |   | start_data	| 	|
      * |   |    data	| 	|
      * |   |    data	| 	|
@@ -59,28 +59,28 @@ public class Server
             
             String command = "";
             
-            //Asociamos la informaci�n de entrada y de salida
+            //Asociamos la informacion de entrada y de salida
             BufferedReader input = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             PrintWriter output = new PrintWriter(connection.getOutputStream(), true);
 
             while(!command.equals("QUIT"))
             {
-                //Obtenemos la informaci�n que nos pasa el cliente
+              
                 command =  input.readLine();
                 
                 System.out.println("Received command " + command);
                 
-                // AQU� HAY QUE VER QU� COMANDO ES Y DECIDIR QU� HACE
-                // EN LOS M�TODOS ABRIREMOS Y CERRAREMOS LA CONEXI�N DE DATOS
+          
                 String response = FunctionalityServer.checkCommand(command);
                 
-                // HAY QUE MANDAR LA RESPUESTA DEL SERVIDOR AL CLIENTE
+                // Mandar respuesta al cliente
+                
                 output.println(response);
                 
 
             }
             
-            // Cerrar la conexi�n del cliente
+            // Cerrar la conexion del cliente
             connection.close();
             System.out.println("Se ha cerrado la conexi�n del usuario.");
             controlConnection.close();
